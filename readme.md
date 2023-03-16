@@ -25,6 +25,6 @@ Clone the repository and setup the module in the nap `modules` directory.
 ```
 cd modules
 clone https://github.com/naivisoftware/napdatabase.git
-./../tools/setup_module.sh napopencv
+./../tools/setup_module.sh napdatabase
 ```
 
