@@ -117,6 +117,17 @@ namespace nap
 		 */
 		bool query(const std::string& whereClause, std::vector<std::unique_ptr<rtti::Object>>& objects, utility::ErrorState& errorState);
 
+        /**
+         * Query the table for objects. The query will deserialize the objects through the factory that was passed onto the function,
+         * allowing thread safety. The whereClause is a condition that can be filled in to select the rows from the table that you want to deserialize.
+         * @param whereClause The part of the SQL query that comes after the WHERE statement. Keep empty to deserialize all.
+         * @param objects The deserialized objects
+         * @param factory The factory to use for deserialization
+         * @param errorState if the function returns false, contains error information.
+         * @return true if the query was successful, false otherwise
+         */
+        bool query(const std::string& whereClause, std::vector<std::unique_ptr<rtti::Object>>& objects, rtti::Factory& factory, utility::ErrorState& errorState);
+		
 		/**
 		 * Clears all rows from the table.
 		 * @param errorState: if the function returns false, contains error information.

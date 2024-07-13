@@ -342,6 +342,35 @@ namespace nap
 	}
 
 
+    bool DatabaseTable::query(const std::string &whereClause, std::vector<std::unique_ptr<rtti::Object>> &objects, rtti::Factory& factory, utility::ErrorState &errorState)
+    {
+        // Execute the query
+        std::string sql = utility::stringFormat("SELECT * FROM %s %s %s", mTableID.c_str(), whereClause.empty() ? "" : "WHERE", whereClause.c_str());
+        sqlite3_stmt* statement = nullptr;
+        if (!errorState.check(sqlite3_prepare_v2(mDatabase, sql.c_str(), sql.size(), &statement, nullptr) == SQLITE_OK, "Failed to create query %s", sql.c_str()))
+            return false;
+
+        // Process all rows
+        while (sqlite3_step(statement) == SQLITE_ROW)
+        {
+            // Create an object through the factory
+            std::unique_ptr<rtti::Object> object(factory.create(mObjectType));
+
+            // Set all properties from the columns as retrieved by the query for this row
+            for (int column_index = 0; column_index < mColumns.size(); ++column_index)
+            {
+                const Column& column = mColumns[column_index];
+                setColumnValue(*object, column.mPath->getRTTIPath(), *statement, column_index);
+            }
+            objects.emplace_back(std::move(object));
+        }
+
+        sqlite3_finalize(statement);
+
+        return true;
+    }
+
+
 	bool DatabaseTable::query(const std::string& whereClause, std::vector<std::unique_ptr<rtti::Object>>& objects, utility::ErrorState& errorState)
 	{
 		// Execute the query
