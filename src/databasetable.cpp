@@ -371,6 +371,25 @@ namespace nap
     }
 
 
+    bool DatabaseTable::remove(const std::string& whereClause, utility::ErrorState& errorState)
+    {
+        std::string sql = utility::stringFormat("DELETE FROM %s %s %s", mTableID.c_str(), whereClause.empty() ? "" : "WHERE", whereClause.c_str());
+        sqlite3_stmt* statement = nullptr;
+        int result = sqlite3_prepare_v2(mDatabase, sql.c_str(), sql.size(), &statement, nullptr);
+        if (!errorState.check(result == SQLITE_OK, "Failed to create delete %s", sql.c_str()))
+            return false;
+
+        while (sqlite3_step(statement) == SQLITE_ROW)
+        {
+            // Do nothing
+        }
+
+        sqlite3_finalize(statement);
+
+        return true;
+    }
+
+
 	bool DatabaseTable::query(const std::string& whereClause, std::vector<std::unique_ptr<rtti::Object>>& objects, utility::ErrorState& errorState)
 	{
 		// Execute the query

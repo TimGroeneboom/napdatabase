@@ -118,6 +118,14 @@ namespace nap
 		bool query(const std::string& whereClause, std::vector<std::unique_ptr<rtti::Object>>& objects, utility::ErrorState& errorState);
 
         /**
+         * Removes objects from the table. The whereClause is a condition that can be filled in to select the rows from the table that you want to remove.
+         * @param whereClause The part of the SQL query that comes after the WHERE statement. Keep empty to remove all.
+         * @param errorState if the function returns false, contains error information.
+         * @return true if the remove was successful, false otherwise
+         */
+        bool remove(const std::string& whereClause, utility::ErrorState& errorState);
+
+        /**
          * Query the table for objects. The query will deserialize the objects through the factory that was passed onto the function,
          * allowing thread safety. The whereClause is a condition that can be filled in to select the rows from the table that you want to deserialize.
          * @param whereClause The part of the SQL query that comes after the WHERE statement. Keep empty to deserialize all.
